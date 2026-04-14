@@ -27,8 +27,17 @@ ENV/
 .vscode/
 *.iml
 
-# OS
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
 
 # Ignore everything else not explicitly tracked
 *
