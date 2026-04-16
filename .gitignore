@@ -39,12 +39,32 @@ Desktop.ini
 $RECYCLE.BIN/
 *.lnk
 
-# Ignore everything else not explicitly tracked
-*
+# Temporary/generated files
+*.log
+*.tmp
+.env
 
-# Track only data and analysis folders
-!.gitignore
+# TRACK PROJECT FILES
+!README.md
+!HOW_IT_WORKS.md
+!IMPLEMENTATION_SUMMARY.md
+!ROUND1_STRATEGY.md
+!MANUAL_CHALLENGE_STRATEGY.md
+!COMPETITION_READINESS.md
+!RULES_COMPLIANCE.md
+!SIMULATOR_TEST_PLAN.md
+
+!trader.py
+!*.py
+
+!scripts/
+!scripts/**
+
 !data/
 !data/**
-!analysis/
-!analysis/**
+
+# DAD's contributions (clearly separated)
+!DAD/
+!DAD/**
+
+!.gitignore

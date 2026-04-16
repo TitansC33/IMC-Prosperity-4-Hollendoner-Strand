@@ -1,0 +1,184 @@
+================================================================================
+ANALYSIS OUTPUT - ROUND 1 DATA
+================================================================================
+
+
+
+STARTING VISUALIZATION ANALYSIS...
+
+
+============================================================
+PRICE TIMESERIES DATA
+============================================================
+
+ASH_COATED_OSMIUM:
+  VWAP: 10000.24
+  Min price: 9979.00
+  Max price: 10026.00
+  First price: 9990.00
+  Last price: 9999.00
+  Price direction: UP
+
+INTARIAN_PEPPER_ROOT:
+  VWAP: 11498.99
+  Min price: 9995.00
+  Max price: 13005.00
+  First price: 9995.00
+  Last price: 13005.00
+  Price direction: UP
+
+[Saved: price_timeseries.png]
+
+============================================================
+HISTOGRAM DATA: ASH_COATED_OSMIUM
+============================================================
+[   9979 -    9981]:    2 trades 
+[   9981 -    9982]:   10 trades █
+[   9982 -    9984]:   12 trades █
+[   9984 -    9985]:   28 trades ██
+[   9985 -    9987]:   29 trades ██
+[   9987 -    9988]:   59 trades █████
+[   9988 -    9990]:   41 trades ████
+[   9990 -    9992]:   90 trades █████████
+[   9992 -    9993]:  118 trades ███████████
+[   9993 -    9995]:   53 trades █████
+[   9995 -    9996]:   92 trades █████████
+[   9996 -    9998]:   24 trades ██
+[   9998 -    9999]:   57 trades █████
+[   9999 -   10001]:   29 trades ██
+[  10001 -   10002]:   49 trades ████
+[  10002 -   10004]:   69 trades ██████
+[  10004 -   10006]:   45 trades ████
+[  10006 -   10007]:   94 trades █████████
+[  10007 -   10009]:   59 trades █████
+[  10009 -   10010]:  112 trades ███████████
+[  10010 -   10012]:   43 trades ████
+[  10012 -   10013]:   66 trades ██████
+[  10013 -   10015]:   37 trades ███
+[  10015 -   10017]:   16 trades █
+[  10017 -   10018]:   19 trades █
+[  10018 -   10020]:    7 trades 
+[  10020 -   10021]:    3 trades 
+[  10021 -   10023]:    0 trades 
+[  10023 -   10024]:    1 trades 
+[  10024 -   10026]:    1 trades 
+
+============================================================
+HISTOGRAM DATA: INTARIAN_PEPPER_ROOT
+============================================================
+[   9995 -   10095]:   35 trades ███
+[  10095 -   10196]:   27 trades ██
+[  10196 -   10296]:   43 trades ████
+[  10296 -   10396]:   37 trades ███
+[  10396 -   10497]:   25 trades ██
+[  10497 -   10597]:   38 trades ███
+[  10597 -   10697]:   35 trades ███
+[  10697 -   10798]:   41 trades ████
+[  10798 -   10898]:   28 trades ██
+[  10898 -   10998]:   36 trades ███
+[  10998 -   11099]:   35 trades ███
+[  11099 -   11199]:   31 trades ███
+[  11199 -   11299]:   30 trades ███
+[  11299 -   11400]:   26 trades ██
+[  11400 -   11500]:   36 trades ███
+[  11500 -   11600]:   40 trades ████
+[  11600 -   11701]:   36 trades ███
+[  11701 -   11801]:   38 trades ███
+[  11801 -   11901]:   32 trades ███
+[  11901 -   12002]:   31 trades ███
+[  12002 -   12102]:   32 trades ███
+[  12102 -   12202]:   31 trades ███
+[  12202 -   12303]:   36 trades ███
+[  12303 -   12403]:   31 trades ███
+[  12403 -   12503]:   25 trades ██
+[  12503 -   12604]:   26 trades ██
+[  12604 -   12704]:   37 trades ███
+[  12704 -   12804]:   28 trades ██
+[  12804 -   12905]:   41 trades ████
+[  12905 -   13005]:   44 trades ████
+
+[Saved: price_distributions.png]
+
+============================================================
+VOLUME ANALYSIS DATA
+============================================================
+
+ASH_COATED_OSMIUM:
+  Total volume: 6593 units
+  Avg trade size: 5.2 units
+  Min trade size: 2 units
+  Max trade size: 10 units
+  Std dev trade size: 2.3 units
+
+INTARIAN_PEPPER_ROOT:
+  Total volume: 5230 units
+  Avg trade size: 5.2 units
+  Min trade size: 2 units
+  Max trade size: 8 units
+  Std dev trade size: 1.5 units
+
+[Saved: volume_analysis.png]
+
+============================================================
+PRICE MOMENTUM DATA
+============================================================
+
+ASH_COATED_OSMIUM:
+  Momentum mean: +0.0071
+  Momentum std: 11.9608
+  Up moves: 558 (44.1%)
+  Down moves: 550 (43.5%)
+  Max price jump: +22
+  Max price drop: -23
+
+INTARIAN_PEPPER_ROOT:
+  Momentum mean: +2.9802
+  Momentum std: 9.1425
+  Up moves: 627 (62.1%)
+  Down moves: 330 (32.7%)
+  Max price jump: +31
+  Max price drop: -19
+
+[Saved: price_momentum.png]
+
+============================================================
+BID-ASK SPREAD DATA
+============================================================
+
+ASH_COATED_OSMIUM:
+  Bid range: 9976 - 10014
+  Ask range: 9984 - 10026
+  Avg spread: 16.18
+  Min spread: 5.00
+  Max spread: 22.00
+  Spread std dev: 2.57
+
+INTARIAN_PEPPER_ROOT:
+  Bid range: 9992 - 12993
+  Ask range: 10002 - 13010
+  Avg spread: 13.05
+  Min spread: 2.00
+  Max spread: 21.00
+  Spread std dev: 2.63
+
+[Saved: bid_ask_spreads.png]
+
+============================================================
+PRODUCT COMPARISON DATA
+============================================================
+
+ASH_COATED_OSMIUM:
+  First price: 9990.00
+  Last price: 9999.00
+  Total % change: +0.09%
+  Max % gain: +0.36%
+  Max % loss: -0.11%
+
+INTARIAN_PEPPER_ROOT:
+  First price: 9995.00
+  Last price: 13005.00
+  Total % change: +30.12%
+  Max % gain: +30.12%
+  Max % loss: +0.00%
+
+[Saved: price_comparison.png]
