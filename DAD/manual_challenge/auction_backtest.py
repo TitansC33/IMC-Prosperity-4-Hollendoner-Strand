@@ -8,7 +8,7 @@ import numpy as np
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "analysis"))
 
 from load_data import load_all_prices, load_all_trades
 

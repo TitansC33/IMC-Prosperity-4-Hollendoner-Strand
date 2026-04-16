@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from collections import defaultdict
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "analysis"))
 
 from load_data import load_all_trades, load_all_prices
 
