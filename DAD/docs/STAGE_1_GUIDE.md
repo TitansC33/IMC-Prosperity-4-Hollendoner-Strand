@@ -13,20 +13,20 @@ Round 1 has **three distinct phases**. This guide maps files and strategy to eac
 **What happens**: Your algorithm trades ASH_COATED_OSMIUM and INTARIAN_PEPPER_ROOT automatically
 
 ### Files Needed
-- **`trader.py`** ← **SUBMIT THIS TO COMPETITION**
+- **`continuous_trading/trader.py`** ← **SUBMIT THIS TO COMPETITION**
   - Dual-commodity trading algorithm
   - Market-making for Osmium, Trend-following for Pepper
   - Optimized parameters from grid search
   - Expected profit: +340,091 XIRECs (170% of 200k target)
 
 ### Reference Documentation
-- `HOW_IT_WORKS.md` - Complete algorithm explanation
-- `IMPLEMENTATION_SUMMARY.md` - Results and validation
-- `README.md` - System overview
+- `docs/HOW_IT_WORKS.md` - Complete algorithm explanation
+- `docs/IMPLEMENTATION_SUMMARY.md` - Results and validation
+- `docs/README.md` - System overview
 
 ### Validation Scripts (for verification only)
-- `scripts/backtest_v2.py` - Validates baseline strategy on historical data
-  - Run: `python scripts/backtest_v2.py`
+- `continuous_trading/backtest_v2.py` - Validates baseline strategy on historical data
+  - Run: `python continuous_trading/backtest_v2.py`
   - Shows: +340k expected profit with ±80 position limits
 
 ### What You Don't Control
@@ -45,21 +45,21 @@ Round 1 has **three distinct phases**. This guide maps files and strategy to eac
 - **EMBER_MUSHROOM**: Buyback @20 XIRECs (0.10 fee per unit traded)
 
 ### Files Needed
-- **`MANUAL_CHALLENGE_STRATEGY.md`** ← **READ THIS BEFORE AUCTION**
+- **`docs/MANUAL_CHALLENGE_STRATEGY.md`** ← **READ THIS BEFORE AUCTION**
   - Step-by-step bidding algorithm
   - How to estimate clearing price
   - Quantity scaling based on profit
   - Bid price strategy (beat best bid by 1)
 
 ### Validation/Reference Scripts
-- `scripts/auction_backtest.py` - Validates bidding strategy
-  - Run before auction to build confidence: `python scripts/auction_backtest.py`
+- `manual_challenge/auction_backtest.py` - Validates bidding strategy
+  - Run before auction to build confidence: `python manual_challenge/auction_backtest.py`
   - Results: 100% success rate on both products
   - Expected auction profit: +4,934 XIRECs (bonus on top of +340k)
 
 ### What You Need to Do
 1. When auction time announced, be ready to submit a bid
-2. Read `MANUAL_CHALLENGE_STRATEGY.md` for the algorithm
+2. Read `docs/MANUAL_CHALLENGE_STRATEGY.md` for the algorithm
 3. When you see the market order book:
    - Estimate clearing price from existing bids/asks
    - Calculate profit per unit (30 - estimate for FLAX, 20 - estimate - 0.10 for MUSHROOM)
@@ -75,62 +75,62 @@ Round 1 has **three distinct phases**. This guide maps files and strategy to eac
 **Not needed for competition**, but useful for understanding how we optimized everything:
 
 ### Data Analysis Scripts
-- `scripts/load_data.py` - Parses historical market data
-- `scripts/analyze_prices.py` - Statistical pattern discovery (found that Osmium mean-reverts, Pepper trends)
-- `scripts/visualize.py` - Creates charts of price movements
-- `scripts/time_block_analysis.py` - Intraday pattern analysis
+- `analysis/load_data.py` - Parses historical market data
+- `analysis/analyze_prices.py` - Statistical pattern discovery (found that Osmium mean-reverts, Pepper trends)
+- `analysis/visualize.py` - Creates charts of price movements
+- `analysis/time_block_analysis.py` - Intraday pattern analysis
 
-### Parameter Optimization
-- `scripts/grid_search_backtest.py` - ⚠️ **REMOVE** (superseded)
-- `scripts/grid_search_realistic.py` - ⚠️ **REMOVE** (already analyzed)
-- `scripts/grid_search_scaled.py` - ⚠️ **REMOVE AFTER COMPLETION** (currently running, finding better parameters)
+### Parameter Optimization (Archive)
+- `analysis/grid_search_backtest.py` - Basic grid search (768 combinations, superseded)
+- `analysis/grid_search_realistic.py` - Realistic search (2,304 combinations, produced best parameters)
+- `scripts/grid_search_scaled.py` - Extended search (20,736 combinations, completed ~25%, no improvement found)
 
-### Data Files (Analysis)
-- `scripts/grid_search_results.csv` - ⚠️ **REMOVE** (basic results, already extracted)
-- `scripts/grid_search_realistic_results.csv` - ⚠️ **REMOVE** (already extracted best params)
-- `scripts/grid_search_scaled_results.csv` - ⚠️ **REMOVE AFTER RUNNING** (in progress)
+### Data Files (Completed Analysis)
+- `analysis/analysis_output.txt` - Pattern discovery results
+- `scripts/grid_search_scaled_results.csv` - Completed scaled search results
 
 ---
 
 ## File Organization Summary
 
 ### KEEP (Essential for Round 1)
+
 ```
 DAD/
-├── trader.py                          ← SUBMIT THIS
-├── HOW_IT_WORKS.md
-├── IMPLEMENTATION_SUMMARY.md
-├── MANUAL_CHALLENGE_STRATEGY.md
-├── ROUND1_STRATEGY.md
-├── RULES_COMPLIANCE.md
-├── COMPETITION_READINESS.md
-├── README.md
-├── STAGE_1_GUIDE.md (this file)
-└── scripts/
-    ├── backtest_v2.py                ← Validation
-    ├── auction_backtest.py           ← Validation
-    ├── load_data.py                  ← Development (reference)
-    ├── analyze_prices.py             ← Development (reference)
-    ├── visualize.py                  ← Development (reference)
-    └── time_block_analysis.py        ← Development (reference)
-```
-
-### REMOVE (After validation)
-```
-DAD/scripts/
-├── grid_search_backtest.py           ✗ Delete
-├── grid_search_results.csv           ✗ Delete
-├── grid_search_realistic.py          ✗ Delete
-├── grid_search_realistic_results.csv ✗ Delete
-└── (After grid_search_scaled completes)
-    ├── grid_search_scaled.py         ✗ Delete
-    └── grid_search_scaled_results.csv ✗ Delete
+├── continuous_trading/
+│   ├── trader.py                     ← SUBMIT THIS
+│   ├── backtest_v2.py                ← Validation
+│   └── README.md
+├── manual_challenge/
+│   ├── auction_backtest.py           ← Validation
+│   └── README.md
+├── analysis/
+│   ├── load_data.py                  ← Development (reference)
+│   ├── analyze_prices.py             ← Development (reference)
+│   ├── visualize.py                  ← Development (reference)
+│   ├── time_block_analysis.py        ← Development (reference)
+│   └── README.md
+├── docs/
+│   ├── HOW_IT_WORKS.md
+│   ├── IMPLEMENTATION_SUMMARY.md
+│   ├── MANUAL_CHALLENGE_STRATEGY.md
+│   ├── ROUND1_STRATEGY.md
+│   ├── RULES_COMPLIANCE.md
+│   ├── COMPETITION_READINESS.md
+│   ├── README.md
+│   ├── STAGE_1_GUIDE.md (this file)
+│   └── ...
+└── scripts/ (keeping for now)
+    ├── grid_search_scaled.py         ⚠️ Delete after use
+    └── grid_search_scaled_results.csv ⚠️ Delete after use
 ```
 
 ### OPTIONAL (Depends on your preference)
+
 ```
-DAD/
-└── trader_original.py                ? Keep for backup or delete
+DAD/analysis/
+├── trader_original.py                ? Keep for backup or delete
+└── grid_search_realistic.py           ? Already analyzed, can delete
 ```
 
 ---

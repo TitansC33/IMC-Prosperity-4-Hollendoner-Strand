@@ -19,7 +19,7 @@ This repository contains a dual-commodity algorithmic trading system for **IMC P
 
 ## 🚀 The Competition File
 
-### **trader.py** (THE MAIN EXECUTABLE)
+### **continuous_trading/trader.py** (THE MAIN EXECUTABLE)
 
 This is the **ONLY file** that runs during the competition:
 
@@ -142,9 +142,11 @@ IMC Prosperity 4 rules compliance audit:
 
 ## 🛠️ Supporting Scripts (Development & Analysis)
 
-These scripts are **NOT used during competition** but were essential for building and validating the algorithm:
+These scripts are **NOT used during competition** but were essential for building and validating the algorithm.
 
-### **scripts/load_data.py**
+**Location**: `analysis/` folder
+
+### **analysis/load_data.py**
 **Purpose**: Data loading and parsing  
 **What it does**:
 - Loads historical CSV files (prices, trades, conversions)
@@ -157,7 +159,7 @@ These scripts are **NOT used during competition** but were essential for buildin
 
 ---
 
-### **scripts/analyze_prices.py**
+### **analysis/analyze_prices.py**
 **Purpose**: Pattern discovery and statistical analysis  
 **What it does**:
 - Calculates price autocorrelation (detects mean-reversion)
@@ -171,7 +173,7 @@ These scripts are **NOT used during competition** but were essential for buildin
 
 ---
 
-### **scripts/time_block_analysis.py**
+### **analysis/time_block_analysis.py**
 **Purpose**: Intraday pattern detection  
 **What it does**:
 - Divides each day into 50 time blocks
@@ -188,7 +190,7 @@ These scripts are **NOT used during competition** but were essential for buildin
 
 ---
 
-### **scripts/visualize.py**
+### **analysis/visualize.py**
 **Purpose**: Data visualization and export  
 **What it does**:
 - Generates 6 PNG charts:
@@ -205,7 +207,7 @@ These scripts are **NOT used during competition** but were essential for buildin
 
 ---
 
-### **scripts/backtest_v2.py** ⭐ MAIN STRATEGY VALIDATION
+### **continuous_trading/backtest_v2.py** ⭐ MAIN STRATEGY VALIDATION
 **Purpose**: Validate algorithm on historical data  
 **What it does**:
 - Simulates trader.py logic on 3 days of historical trades
@@ -226,7 +228,7 @@ These scripts are **NOT used during competition** but were essential for buildin
 
 ---
 
-### **scripts/auction_backtest.py** ⭐ AUCTION STRATEGY VALIDATION
+### **manual_challenge/auction_backtest.py** ⭐ AUCTION STRATEGY VALIDATION
 **Purpose**: Validate manual challenge auction strategy  
 **What it does**:
 - Extracts order book microstructure from continuous trading data
