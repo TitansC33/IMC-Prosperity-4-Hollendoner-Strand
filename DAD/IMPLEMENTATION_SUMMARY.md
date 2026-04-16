@@ -51,7 +51,7 @@
 
 ---
 
-## Recommended Configuration
+## Recommended Configuration (Baseline)
 
 ```
 Position Limits: ±80 for both commodities
@@ -59,6 +59,33 @@ Expected Result: +340,091 XIRECs (170% of target)
 Margin of Safety: +140,091 XIRECs buffer
 Risk Level: LOW
 ```
+
+---
+
+## Parameter Optimization (Grid Search)
+
+### Phase 1: High-Impact Search (2,304 combinations)
+Tested: EMA alpha, inventory bias, VWAP window, volatility thresholds, position limits
+
+**Best Result Found: +161,186 XIRECs (80.6% of target)**
+
+Optimal parameters identified:
+- **Osmium EMA Alpha**: 0.15 (slower trend detection)
+- **Osmium Inventory Bias**: 0.7 (conservative rebalancing)
+- **Osmium VWAP Window**: 15 (faster price response)
+- **Osmium Vol Base**: 15 (aggressive volatility scaling)
+- **Pepper EMA Alpha**: 0.25 (moderate trend detection)
+- **Pepper Vol Base**: 300 (conservative for volatility)
+
+These parameters are now **hardcoded in trader.py** (lines 177-181, 249-252)
+
+### Phase 2: Scaled Search (20,000+ combinations - in progress)
+Extended grid around optimal values for further refinement:
+- Osmium EMA: 0.12-0.25
+- Osmium Inventory Bias: 0.6-0.8
+- Osmium VWAP Window: 12-22
+- Pepper EMA: 0.2-0.3
+- Est. completion: 60-90 minutes
 
 ---
 

@@ -174,11 +174,17 @@ class Trader:
         symbol = "ASH_COATED_OSMIUM"
         orders: List[Order] = []
 
+        # === OPTIMIZED PARAMETERS (from grid search) ===
+        OSMIUM_EMA_ALPHA = 0.15  # Slower trend detection (less noise)
+        OSMIUM_VWAP_WINDOW = 15  # Faster response to price changes
+        OSMIUM_INVENTORY_BIAS = 0.7  # More conservative rebalancing
+        OSMIUM_VOL_BASE = 15  # Volatility threshold
+
         # 1. Update History with Market Trades
         m_trades = state.market_trades.get(symbol, [])
         for t in m_trades:
             memory[f"{symbol}_history"].append([t.price, t.quantity])
-        memory[f"{symbol}_history"] = memory[f"{symbol}_history"][-20:]
+        memory[f"{symbol}_history"] = memory[f"{symbol}_history"][-OSMIUM_VWAP_WINDOW:]
 
         # 2. Calculate VWAP (The Anchor)
         if len(memory[f"{symbol}_history"]) > 0:
@@ -213,7 +219,7 @@ class Trader:
 
         # 5. Inventory Leaning
         current_pos = state.position.get(symbol, 0)
-        inventory_bias = current_pos * 0.9
+        inventory_bias = current_pos * OSMIUM_INVENTORY_BIAS
 
         final_buy_price = int(round(penny_buy_price - inventory_bias))
         final_sell_price = int(round(penny_sell_price - inventory_bias))
@@ -222,7 +228,7 @@ class Trader:
         if len(memory[f"{symbol}_history"]) > 0:
             recent_prices = np.array([x[0] for x in memory[f"{symbol}_history"]])
             volatility = self.calculate_volatility(recent_prices)
-            vol_scale = self.get_position_scale(volatility)
+            vol_scale = self.get_position_scale(volatility, OSMIUM_VOL_BASE)
         else:
             vol_scale = 1.0
 
@@ -248,6 +254,10 @@ class Trader:
         symbol = "INTARIAN_PEPPER_ROOT"
         orders: List[Order] = []
 
+        # === OPTIMIZED PARAMETERS (from grid search) ===
+        PEPPER_EMA_ALPHA = 0.25  # Slower trend detection than before
+        PEPPER_VOL_BASE = 300  # Higher threshold for volatile commodity
+
         # 1. Update History with Market Trades
         m_trades = state.market_trades.get(symbol, [])
         for t in m_trades:
@@ -260,7 +270,7 @@ class Trader:
             volumes = np.array([x[1] for x in memory[f"{symbol}_history"]])
 
             # Get EMA for trend
-            ema = self.calculate_ema(prices, alpha=0.3)
+            ema = self.calculate_ema(prices, alpha=PEPPER_EMA_ALPHA)
             vwap = self.calculate_vwap(prices, volumes)
             current_price = prices[-1]
 
@@ -282,7 +292,7 @@ class Trader:
         if len(memory[f"{symbol}_history"]) > 0:
             recent_prices = np.array([x[0] for x in memory[f"{symbol}_history"]])
             volatility = self.calculate_volatility(recent_prices)
-            vol_scale = self.get_position_scale(volatility, base_volatility=300)  # Higher threshold for volatile Pepper
+            vol_scale = self.get_position_scale(volatility, base_volatility=PEPPER_VOL_BASE)
         else:
             vol_scale = 1.0
 

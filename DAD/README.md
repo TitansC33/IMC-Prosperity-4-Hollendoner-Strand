@@ -10,6 +10,11 @@ This repository contains a dual-commodity algorithmic trading system for **IMC P
 
 **Status**: ✅ Production Ready
 
+**Latest Update**: Parameter optimization via grid search (2,304+ combinations tested)
+- Osmium parameters tuned: EMA=0.15, Bias=0.7, Window=15
+- Pepper parameters tuned: EMA=0.25, VolBase=300
+- Changes hardcoded in trader.py (lines 177-181, 249-252)
+
 ---
 
 ## 🚀 The Competition File
