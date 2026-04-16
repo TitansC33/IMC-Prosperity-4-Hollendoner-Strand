@@ -169,16 +169,68 @@ class Trader:
         else:
             return 0.8  # Medium: 80% size
 
+    def calculate_adaptive_ema_alpha(self, prices, base_alpha=0.25):
+        """Adaptively adjust EMA alpha based on market conditions
+
+        Trending market: use slower alpha (catch longer trends)
+        Choppy market: use faster alpha (reduce false signals)
+        """
+        if len(prices) < 10:
+            return base_alpha  # Not enough data
+
+        # Calculate EMA with base alpha
+        ema = self.calculate_ema(prices, alpha=base_alpha)
+
+        # Measure trend strength: how consistent is price above/below EMA?
+        prices_above_ema = sum(1 for p in prices[-10:] if p > ema)
+        trend_strength = abs(prices_above_ema - 5) / 5.0  # 0 = choppy, 1 = trending
+
+        # Adjust alpha: trending market gets slower alpha, choppy gets faster
+        if trend_strength > 0.7:  # Strong trend
+            return base_alpha * 0.8  # Slower (0.25 → 0.20)
+        elif trend_strength < 0.3:  # Choppy market
+            return base_alpha * 1.3  # Faster (0.25 → 0.325)
+        else:  # Neutral
+            return base_alpha
+
+    def detect_mean_reversion_opportunity(self, prices, vwap):
+        """Detect extreme price overshoots for counter-trading
+
+        If price deviates >2 std devs from VWAP, it's likely to mean-revert
+        Returns: (is_extreme, direction) where direction is 'up' or 'down'
+        """
+        if len(prices) < 5:
+            return False, None
+
+        # Calculate standard deviation from VWAP
+        std_dev = np.std(prices[-20:]) if len(prices) >= 20 else np.std(prices)
+        current_price = prices[-1]
+        deviation = abs(current_price - vwap)
+
+        # Extreme threshold: >2 standard deviations
+        extreme_threshold = 2.0 * std_dev
+
+        if deviation < extreme_threshold:
+            return False, None  # Normal market
+
+        # Detect direction
+        if current_price > vwap + extreme_threshold:
+            return True, 'down'  # Price too high, expect reversal down
+        elif current_price < vwap - extreme_threshold:
+            return True, 'up'  # Price too low, expect reversal up
+
+        return False, None
+
     def trade_osmium_market_making(self, state: TradingState, memory: Dict) -> List[Order]:
         """Market-making strategy for ASH_COATED_OSMIUM"""
         symbol = "ASH_COATED_OSMIUM"
         orders: List[Order] = []
 
-        # === OPTIMIZED PARAMETERS (from grid search) ===
+        # === OPTIMIZED PARAMETERS (Phase 2 Grid Search: 28,000+ combos) ===
         OSMIUM_EMA_ALPHA = 0.15  # Slower trend detection (less noise)
         OSMIUM_VWAP_WINDOW = 15  # Faster response to price changes
         OSMIUM_INVENTORY_BIAS = 0.7  # More conservative rebalancing
-        OSMIUM_VOL_BASE = 15  # Volatility threshold
+        OSMIUM_VOL_BASE = 20  # UPDATED: Volatility threshold (Phase 2 optimal)
 
         # 1. Update History with Market Trades
         m_trades = state.market_trades.get(symbol, [])
@@ -232,12 +284,27 @@ class Trader:
         else:
             vol_scale = 1.0
 
-        # 7. Place Orders (with volatility scaling)
+        # 6.5 ENHANCEMENT: Detect Mean Reversion Opportunities
+        # If price has overshot fair value, counter-trade aggressively
+        mr_scale = 1.0  # Default: no mean reversion scaling
+        if len(memory[f"{symbol}_history"]) > 0:
+            recent_prices = np.array([x[0] for x in memory[f"{symbol}_history"]])
+            is_extreme, mr_direction = self.detect_mean_reversion_opportunity(recent_prices, vwap)
+            if is_extreme:
+                mr_scale = 1.5  # Scale up orders by 50% when extreme
+                # If price too high, buy more aggressively
+                # If price too low, sell more aggressively
+
+        # 7. Place Orders (with volatility scaling + mean reversion scaling)
         room_to_buy = 80 - current_pos
         room_to_sell = -80 - current_pos
 
-        scaled_buy = int(room_to_buy * vol_scale)
-        scaled_sell = int(room_to_sell * vol_scale)
+        # Apply both scaling factors
+        combined_scale = vol_scale * mr_scale
+        combined_scale = min(combined_scale, 2.0)  # Cap at 2x to prevent overexposure
+
+        scaled_buy = int(room_to_buy * combined_scale)
+        scaled_sell = int(room_to_sell * combined_scale)
 
         if scaled_buy > 0 and not too_high:
             actual_buy_price = min(final_buy_price, best_ask - 1)
@@ -254,8 +321,8 @@ class Trader:
         symbol = "INTARIAN_PEPPER_ROOT"
         orders: List[Order] = []
 
-        # === OPTIMIZED PARAMETERS (from grid search) ===
-        PEPPER_EMA_ALPHA = 0.25  # Slower trend detection than before
+        # === OPTIMIZED PARAMETERS (Phase 2 Grid Search: 28,000+ combos) ===
+        PEPPER_EMA_ALPHA = 0.3  # UPDATED: More responsive trend detection (Phase 2 optimal)
         PEPPER_VOL_BASE = 300  # Higher threshold for volatile commodity
 
         # 1. Update History with Market Trades
@@ -269,8 +336,9 @@ class Trader:
             prices = np.array([x[0] for x in memory[f"{symbol}_history"]])
             volumes = np.array([x[1] for x in memory[f"{symbol}_history"]])
 
-            # Get EMA for trend
-            ema = self.calculate_ema(prices, alpha=PEPPER_EMA_ALPHA)
+            # Get EMA for trend with ADAPTIVE alpha (responds to market conditions)
+            adaptive_alpha = self.calculate_adaptive_ema_alpha(prices, base_alpha=PEPPER_EMA_ALPHA)
+            ema = self.calculate_ema(prices, alpha=adaptive_alpha)
             vwap = self.calculate_vwap(prices, volumes)
             current_price = prices[-1]
 
