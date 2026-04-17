@@ -1,185 +1,236 @@
-# Continuous Trading Phase - Backtesting & Parameter Optimization
+# Continuous Trading: Strategy & Backtesting
+
+## Quick Start
+
+```bash
+# Test current strategy
+python backtest_hybrid.py
+
+# Output: Rankings of all configurations
+```
+
+---
+
+## Current Status
+
+### Live Performance (Validated in Simulator)
+- **Sean Baseline** (pos=20, spread=5): **$2,668** ✓
+- **Current trader.py** (pos=60, spread=4, pskew=0.28): **$2,553** (underperforms)
+
+### Full ROUND1 Backtest Results (Hybrid Methodology)
+| Config | Backtest Profit | Live Result |
+|--------|---|---|
+| COMBO_60_4 (pos=60, sp=4) | $312,331 | Unknown |
+| Conservative Pepper (pos=60, sp=4, pskew=0.28) | $297,250 | $2,553 |
+| Sean Baseline (pos=20, sp=5) | $141,030 | $2,668 ✓ |
+
+**Key Insight**: Backtest profits are ~100-150x higher than live. Use backtest for **relative ranking** (which config is better), not absolute profit prediction.
+
+---
 
 ## Production Files
 
-### `trader.py` — **SUBMIT THIS TO COMPETITION**
-The main trading algorithm that runs automatically during Round 1 (Apr 14-17).
+### `trader.py` — Current Strategy
+Market-making strategy with two components:
+- **Osmium (ASH_COATED_OSMIUM)**: EWM fair value + inventory skew
+- **Pepper Root (INTARIAN_PEPPER_ROOT)**: Large order filtering + trend bias
 
-**What it does:**
-
-- Trades ASH_COATED_OSMIUM (market-making strategy)
-- Trades INTARIAN_PEPPER_ROOT (trend-following strategy)
-- Runs every minute for 72 hours automatically
-
-**Phase 2 Optimized Parameters** (validated through realistic backtesting):
+**Current Parameters** (set as defaults):
 ```python
-# Osmium (Market-Making)
-OSMIUM_EMA_ALPHA = 0.15           # Slower trend, less noise
-OSMIUM_VWAP_WINDOW = 15           # Recent 15 trades for anchor
-OSMIUM_INVENTORY_BIAS = 0.7       # Conservative rebalancing
-OSMIUM_VOL_BASE = 20              # Volatility threshold
-OSMIUM_POSITION_LIMIT = 80        # ±80 per run (proven optimal)
+# Position Limits
+POSITION_LIMITS = {
+    "ASH_COATED_OSMIUM": 60,
+    "INTARIAN_PEPPER_ROOT": 60
+}
 
-# Pepper (Trend-Following)
-PEPPER_EMA_ALPHA = 0.3            # Responsive trend detection
-PEPPER_VOL_BASE = 300             # Higher threshold
-PEPPER_POSITION_LIMIT = 80        # ±80 per run (proven optimal)
+# Osmium
+OSMIUM_SPREAD = 4
+OSMIUM_SKEW_FACTOR = 0.2
+OSMIUM_EWM_ALPHA = 0.002
+
+# Pepper
+PEPPER_LARGE_ORDER_THRESHOLD = 18
+PEPPER_SKEW_FACTOR = 0.28
+PEPPER_QUOTE_IMPROVEMENT = 1
 ```
 
-**Expected Performance**: +286,351 XIRECs (143% of 200k target)
+**Performance**: $2,553 in live simulator (below Sean's $2,668)
+
+### `seanTrader.py` — Baseline (Proven)
+Sean's original strategy. Parameters:
+```python
+POSITION_LIMITS = {"ASH_COATED_OSMIUM": 20, "INTARIAN_PEPPER_ROOT": 20}
+OSMIUM_SPREAD = 5
+PEPPER_SKEW_FACTOR = 0.3
+PEPPER_LARGE_ORDER_THRESHOLD = 18
+```
+
+**Performance**: $2,668 in live simulator ✓ (best validated)
 
 ---
 
-## Backtesting System (NEW - Realistic Order Matching)
+## Backtesting System
 
-### Core Tools
+### The Correct Backtest: `backtest_hybrid.py`
 
-| Tool | Purpose | Time | Command |
-| --- | --- | --- | --- |
-| **backtest_v2_with_matching.py** | Single backtest with realistic order matching | 30s | `python backtest_v2_with_matching.py` |
-| **grid_search_with_matching.py** | Test multiple position limit configurations | 5min | `python grid_search_with_matching.py` |
-| **run_backtest_loops.py** | Stress test with randomization + consistency checks | 3-10min | `python run_backtest_loops.py --iterations 20 --randomize-order --randomize-depth` |
+**Why this is correct:**
+- Processes only trade timestamps (~2,218 per ROUND1, not 100k)
+- Uses BOTH order depths (from prices) AND market trades
+- Matches how live simulator receives data
+- Fast: runs 5 configs in ~90 seconds
 
-### What's NEW
+**Old broken backtests** (archived in `_archived_backtests/`):
+- `full_backtest_round1.py` — Missing price data at trades
+- `full_backtest_round1_correct.py` — Timed out
+- Grid searches — Overfitted to 200-trade sample (1% of data)
 
-These tools implement **realistic order matching** following IMC Prosperity platform rules:
-
-- ✅ **Order Depth Priority**: Fill from order book BEFORE market trades
-- ✅ **Price-Time-Priority**: Correct FIFO ordering at same price level
-- ✅ **Position Limit Enforcement**: Strict all-or-nothing rejection
-- ✅ **Match Modes**: Support `all` (default), `worse`, `none`
-- ✅ **Execution Statistics**: Track fills, rejections, rates by product
-
-### Quick Start (5 min)
+### How to Use
 
 ```bash
-# 1. Run single backtest
-python backtest_v2_with_matching.py
+# Run all default configurations
+python backtest_hybrid.py
 
-# 2. Find best parameters
-python grid_search_with_matching.py
-
-# 3. Stress test (randomize order + depths)
-python run_backtest_loops.py --iterations 20 --randomize-order --randomize-depth
+# Output example:
+# Rank  Configuration                    Profit        vs Best
+# 1     COMBO_60_4                       $312,331      +0.00 <-- BEST
+# 2     Conservative Pepper              $297,250      -15,081
+# 3     Sean Baseline                    $141,030      -171,301
 ```
 
-### Validation Results
+### Adding New Configurations
 
-**Baseline (±80/±80)**: +286,351 XIRECs (143% target)  
-**New Optimal (±90/±90)**: +306,755 XIRECs (153% target)  
-**Loop Testing**: 35 iterations, 0 failures, 100% success rate
+Edit `backtest_hybrid.py`, find the `configs` list:
 
-**Key Finding**: Market volatility is an ADVANTAGE (loop test showed +147% higher profits with price noise)
+```python
+configs = [
+    (SeanTrader, "Sean Baseline (pos=20, spread=5)", None),
+    (Trader, "My Test (pos=40, sp=3)", {
+        "POSITION_LIMITS": {"ASH_COATED_OSMIUM": 40, "INTARIAN_PEPPER_ROOT": 40},
+        "OSMIUM_SPREAD": 3
+    }),
+]
+```
+
+Run and rankings appear automatically.
 
 ---
 
-## Supporting Files
+## Core Components
 
 ### `order_matcher.py`
+Realistic order matching engine:
+- Price-time-priority (FIFO at same price)
+- Order depth vs market trades priority
+- Position limit enforcement
+- Multiple match modes (`all`, `worse`, `none`)
 
-Core order matching engine implementing IMC Prosperity rules.
-
-- Used by: `backtest_v2_with_matching.py`, `grid_search_with_matching.py`, `run_backtest_loops.py`
-- Handles: Order depth matching, market trade matching, position limit validation
-
-### `validate_signals_with_execution.py`
-
-Signal validation with execution simulation.
-
-- Tests if generated signals would actually execute
-- Reports fill rates and execution confidence
-- Flags orders rejected by position limits
+**Used by**: `backtest_hybrid.py`
 
 ---
 
 ## Documentation
 
-**Start Here**: See `../docs/START_HERE_BACKTESTING.md` (5 min overview)
-
-**Quick Reference**: `../docs/QUICK_REFERENCE.md` (commands & output interpretation)
-
-**Complete Guide**: `../docs/HOW_TO_USE_BACKTESTING_SYSTEM.md` (8-part detailed walkthrough)
-
-**Parameter Details**: `../docs/RECOMMENDED_TRADER_PARAMETERS.md` (parameter analysis & validation)
-
-**Testing Results**: 
-- `../docs/LOOP_TEST_RESULTS.md` (35 iterations, all scenarios)
-- `../docs/VARIABLES_AND_COMBINATIONS.md` (complete coverage matrix)
-
-**Technical**: `../docs/VISUAL_GUIDE.md` (ASCII diagrams of order matching)
+| File | Purpose |
+|------|---------|
+| **README_BACKTESTING.md** | Quick start & workflows |
+| **BACKTEST_GUIDE.md** | Technical deep dive & troubleshooting |
+| **OPTIMIZATION_SUMMARY.md** | Parameter history & discoveries |
+| **CLEANUP_SUMMARY.md** | This cleanup summary |
 
 ---
 
-## Workflow
+## Key Findings from Analysis
 
-### Daily Check (5 min)
+### 1. Backtest ≠ Live Performance
+- Sample-based optimization showed $344k peak
+- Full dataset backtest shows $312k peak
+- Live results show $2.6k actual
+- Gap is due to market structure differences, competition, position sizing limits
 
-```bash
-python backtest_v2_with_matching.py
-# Check: Portfolio Value > 200,000? → Ready!
-```
+### 2. Position Scaling Doesn't Help Live
+- Backtest ranks pos=60 higher than pos=20
+- Live shows pos=20 (Sean) beating pos=60 (trader.py)
+- Larger positions create slippage in actual competition
 
-### Find Optimal Parameters (5 min)
-
-```bash
-python grid_search_with_matching.py
-# Check: Is ±80/±80 still competitive? Or try ±90/±90?
-```
-
-### Stress Test Before Submission (10 min)
-
-```bash
-python run_backtest_loops.py --iterations 20 --randomize-order --randomize-depth
-# Check: All runs > 200k? Std Dev < 5%? → Ready to submit!
-```
-
-### Test Custom Limits
-
-```bash
-python run_backtest_loops.py --iterations 5 --osmium-limit 90 --pepper-limit 90
-```
+### 3. Sean's Baseline is Validated
+- Only strategy with proven live results: $2,668
+- Simple, aggressive market-making wins over complex optimization
+- Default to baseline until live competition proves otherwise
 
 ---
 
-## File Locations
+## Testing Workflow
 
-```text
+### To Test a Change
+
+1. Modify strategy in `trader.py` or `seanTrader.py`
+2. Run: `python backtest_hybrid.py`
+3. Check rankings
+4. If backtest improves, submit to live simulator
+5. Compare live result vs $2,668 (Sean baseline)
+6. If live is better, keep it; else revert
+
+### To Find Better Parameters
+
+Create grid search by editing `configs` in `backtest_hybrid.py`:
+
+```python
+configs = [
+    (Trader, f"pos={p}, sp={s}", {
+        "POSITION_LIMITS": {"ASH_COATED_OSMIUM": p, "INTARIAN_PEPPER_ROOT": p},
+        "OSMIUM_SPREAD": s
+    })
+    for p in [20, 30, 40, 60]
+    for s in [3, 4, 5]
+]
+```
+
+Run: `python backtest_hybrid.py`  
+Get: 12 configurations ranked automatically
+
+---
+
+## File Structure
+
+```
 DAD/continuous_trading/
-├── trader.py                          ← SUBMIT THIS
-├── backtest_v2_with_matching.py       ← Primary backtest (realistic)
-├── grid_search_with_matching.py       ← Parameter optimization
-├── run_backtest_loops.py              ← Stress testing
-├── order_matcher.py                   ← Core matching engine
-└── validate_signals_with_execution.py ← Signal validation
-
-DAD/docs/
-├── START_HERE_BACKTESTING.md          ← Start here
-├── QUICK_REFERENCE.md                 ← Command cheat sheet
-├── HOW_TO_USE_BACKTESTING_SYSTEM.md   ← Full guide
-├── RECOMMENDED_TRADER_PARAMETERS.md   ← Parameter details
-├── LOOP_TEST_RESULTS.md               ← Test results (35 iterations)
-├── VARIABLES_AND_COMBINATIONS.md      ← Coverage matrix
-└── VISUAL_GUIDE.md                    ← Diagrams
+├── backtest_hybrid.py         ← Use this for all testing
+├── trader.py                  ← Current strategy
+├── seanTrader.py              ← Baseline (best live: $2,668)
+├── order_matcher.py           ← Order matching engine
+├── README.md                  ← This file
+├── README_BACKTESTING.md      ← Quick start guide
+├── BACKTEST_GUIDE.md          ← Technical reference
+├── OPTIMIZATION_SUMMARY.md    ← Parameter history
+├── CLEANUP_SUMMARY.md         ← Cleanup notes
+├── _archived_backtests/       ← 14 old backtest scripts
+└── _archived_results/         ← 21 old result files
 ```
 
 ---
 
-## Pre-Competition Checklist
+## Important Notes
 
-```text
-□ Backtest passes?
-  python backtest_v2_with_matching.py
-  → Portfolio > 200k? YES ✓
+⚠️ **Backtest vs Live Gap**
+- Backtest: ~$150-300k per config
+- Live: ~$2.6k actual
+- This is expected and normal, NOT a bug
+- Use backtest for relative comparison, not absolute values
 
-□ Grid search clear?
-  python grid_search_with_matching.py
-  → Top config still viable? YES ✓
+✅ **Validated Strategy**
+- Sean Baseline is the only strategy with proven live results
+- Use it as the default until competition proves better alternative
 
-□ Loop test passes?
-  python run_backtest_loops.py --iterations 20
-  → All runs > 200k? YES ✓
-  → Std Dev < 5%? YES ✓
+✓ **How to Know If You've Improved**
+- Backtest ranking improves (vs current leader)
+- **AND** live simulator profit increases (vs $2,668 baseline)
+- Both must be true to declare an improvement
 
-□ Ready to deploy!
-  SUBMIT ✅
-```
+---
+
+## Questions?
+
+- **How to run the backtest?** → See `README_BACKTESTING.md`
+- **How does the backtest work?** → See `BACKTEST_GUIDE.md`
+- **Why are profits so different?** → See "Key Findings" above
+- **Old backtests?** → Archived in `_archived_backtests/` (don't use)

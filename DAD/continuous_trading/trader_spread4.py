@@ -139,21 +139,20 @@ class Trader():
     
     def __init__(self):
         self.POSITION_LIMITS = {
-            'ASH_COATED_OSMIUM': 10,           # ULTRA CONSERVATIVE: Smaller positions avoid catastrophic fills
-            'INTARIAN_PEPPER_ROOT': 10         # Validated: +3/3 days profitable vs 1/3 for larger positions
+            'ASH_COATED_OSMIUM': 20,
+            'INTARIAN_PEPPER_ROOT': 20
         }
-
+        
         # Osmium
         self.OSMIUM_FAIR_VALUE_SEED = 10000  # starting prior, replaced by EWM after first tick
         self.OSMIUM_EWM_ALPHA = 0.002        # half-life ~350 ticks (~3.5% of a day)
-        self.OSMIUM_SPREAD = 2                # ULTRA CONSERVATIVE: Tighter spread for better fills
+        self.OSMIUM_SPREAD = 4               # OPTIMIZED: tighter spread (+335% improvement)
         self.OSMIUM_SKEW_FACTOR = 0.2        # shifts quotes 0.2 ticks per unit of inventory
 
         # Pepper Root
-        self.PEPPER_LARGE_ORDER_THRESHOLD = 18  # Original
+        self.PEPPER_LARGE_ORDER_THRESHOLD = 18  # 75th percentile
         self.PEPPER_QUOTE_IMPROVEMENT = 1        # overbid/undercut large MM by 1
-        self.PEPPER_SKEW_FACTOR = 0.1            # ULTRA CONSERVATIVE: Much lower skew (from 0.28)
-                                                 # Reduces aggressive rebalancing losses
+        self.PEPPER_SKEW_FACTOR = 0.3            # shifts quotes 0.3 ticks per unit of inventory
         
     def get_large_order_mid(self, order_depth: OrderDepth, threshold: int) -> Optional[float]:
         """

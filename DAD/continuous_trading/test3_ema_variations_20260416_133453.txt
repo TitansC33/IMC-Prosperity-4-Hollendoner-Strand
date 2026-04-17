@@ -1,5 +1,0 @@
-TEST 3: EMA Variations - Grid Test (100 iterations per combo)
-Started: 2026-04-16 15:33:14
-Command: python run_parameter_grid_search.py --test-ema
-========================================================================================================================
-
