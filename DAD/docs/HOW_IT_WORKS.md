@@ -139,13 +139,17 @@ Repeat for 72 hours
    → Low volatility → full position size (100% of available)
    → Why: Protect capital in choppy markets, maximize in calm markets
 
-7. Check position limits and apply volatility scaling
-   → Can buy up to 55 more units (80 - 25 = 55)
-   → With volatility scaling: BUY 33 units (55 × 0.6 if high volatility)
+7. RIGHT-SIZING: Analyze order book and calculate optimal order size
+   → Look at cumulative order book depth at target prices
+   → Ask: "How much volume do I need to clear through best_ask to move price in my favor?"
+   → Example: Best ask shows 45 units available
+   → Add 10% safety buffer: 45 × 1.1 = 50 units
+   → Apply volatility scaling: 50 × 0.6 = 30 units (if high volatility)
+   → Result: Place RIGHT-SIZED 30-unit order (not max room of 55)
 
-8. Place orders (size adjusted for current market conditions)
-   → BUY 33 @ 9,998 (reduced from 55 due to high volatility)
-   → SELL 33 @ 10,001
+8. Place orders (clearing-level sized)
+   → BUY 30 @ 9,998 (right-sized to clear through best_ask with buffer)
+   → SELL 30 @ 10,001 (right-sized to clear through best_bid with buffer)
 
 9. Update memory: add these 2 trades to history
    → Keep only last 20 trades (trim older ones)
@@ -157,6 +161,68 @@ Repeat for 72 hours
 - 100+ small trades
 - Capture 10-20 units per trade
 - End day with 1,000-2,000 XIRECs profit
+
+---
+
+## Part 3a: Right-Sizing Orders (The Clearing-Level Approach)
+
+### The Philosophy
+
+Instead of placing orders to "fill available position room," place orders sized to **nudge the order book** to your advantage. "You only need the minimum volume to move the clearing price favorably."
+
+### How It Works
+
+#### Step 1: Analyze Cumulative Depth
+
+```
+Order Book (SELL side):
+  Price 10001: 45 units
+  Price 10002: 38 units
+  Price 10003: 22 units
+
+Cumulative:
+  10001: 45 (total to clear through)
+  10002: 83 (45 + 38)
+  10003: 105 (45 + 38 + 22)
+```
+
+#### Step 2: Set Target Price
+
+- Buy target: best_ask (we want to clear through the sellers)
+- Sell target: best_bid (we want to clear through the buyers)
+
+#### Step 3: Calculate Clearing Volume
+
+- For buy: "How much to clear through 10001?" → 45 units
+- Add 10% safety buffer: 45 × 1.1 = 50 units
+
+#### Step 4: Apply Aggressiveness
+
+- Base aggressiveness = volatility_scale × mean_reversion_scale
+- Final size = 50 × aggressiveness factor
+
+**Result**: Place exactly 50 units (not 100+ units filling position room)
+
+### Why This Matters
+
+| Aspect | Old Approach | New Approach |
+| --- | --- | --- |
+| Sizing Logic | Fill position room | Clear through target price |
+| Example Order | 100 units (fill room) | 50 units (clear + buffer) |
+| Market Impact | Higher (larger orders) | Lower (right-sized) |
+| Execution | Partial fills through levels | Efficient clearing |
+| Thin Markets | May oversize dangerously | Auto right-sizes down |
+| Capital Efficiency | Uses 100% room | Uses only needed volume |
+
+### Code Integration
+
+Three methods implement this logic:
+
+1. **get_cumulative_depth(depth, side)** → Build cumulative volume map
+2. **find_clearing_volume(depth, side, target_price)** → Query volume needed
+3. **calculate_right_sized_order(...)** → Compute optimal size with all factors
+
+Both OSMIUM and PEPPER call `calculate_right_sized_order()` for each order placement.
 
 ---
 

@@ -134,9 +134,9 @@ class ProsperityEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
-# Core Trader Class | Algo 
-class Trader(): 
-    
+# Core Trader Class | Algo
+class Trader():
+
     def __init__(self):
         self.POSITION_LIMITS = {
             'ASH_COATED_OSMIUM': 10,           # ULTRA CONSERVATIVE: Smaller positions avoid catastrophic fills
@@ -154,7 +154,7 @@ class Trader():
         self.PEPPER_QUOTE_IMPROVEMENT = 1        # overbid/undercut large MM by 1
         self.PEPPER_SKEW_FACTOR = 0.1            # ULTRA CONSERVATIVE: Much lower skew (from 0.28)
                                                  # Reduces aggressive rebalancing losses
-        
+
     def get_large_order_mid(self, order_depth: OrderDepth, threshold: int) -> Optional[float]:
         """
         Get mid price from LARGE orders only (filtering noise from small orders)
@@ -167,7 +167,7 @@ class Trader():
                 if volume >= threshold:
                     if large_bid is None or price > large_bid:
                         large_bid = price
-        
+
         # Find largest ask
         large_ask = None
         if order_depth.sell_orders:
@@ -175,7 +175,7 @@ class Trader():
                 if abs(volume) >= threshold:
                     if large_ask is None or price < large_ask:
                         large_ask = price
-        
+
         # Calculate mid from large orders
         if large_bid and large_ask:
             return (large_bid + large_ask) / 2
@@ -183,35 +183,35 @@ class Trader():
             return large_bid + 10  # Estimate
         elif large_ask:
             return large_ask - 10  # Estimate
-        
+
         # Fallback to regular mid
         if order_depth.buy_orders and order_depth.sell_orders:
             return (max(order_depth.buy_orders.keys()) + min(order_depth.sell_orders.keys())) / 2
-        
+
         return None
-    
+
     def get_large_order_levels(self, order_depth: OrderDepth, threshold: int) -> Tuple[Optional[int], Optional[int]]:
         """Get the price levels where large orders sit"""
         large_bid = None
         large_bid_vol = 0
-        
+
         if order_depth.buy_orders:
             for price, volume in order_depth.buy_orders.items():
                 if volume >= threshold and volume > large_bid_vol:
                     large_bid = price
                     large_bid_vol = volume
-        
+
         large_ask = None
         large_ask_vol = 0
-        
+
         if order_depth.sell_orders:
             for price, volume in order_depth.sell_orders.items():
                 if abs(volume) >= threshold and abs(volume) > large_ask_vol:
                     large_ask = price
                     large_ask_vol = abs(volume)
-        
+
         return large_bid, large_ask
-    
+
     def trade_osmium(self, state: TradingState, state_data: dict) -> List[Order]:
         product = 'ASH_COATED_OSMIUM'
         orders = []
@@ -232,7 +232,7 @@ class Trader():
             current_mid = (max(order_depth.buy_orders.keys()) + min(order_depth.sell_orders.keys())) / 2
             fair_value = self.OSMIUM_EWM_ALPHA * current_mid + (1 - self.OSMIUM_EWM_ALPHA) * fair_value
         state_data['osmium_ewm'] = fair_value
-        
+
         skew = self.OSMIUM_SKEW_FACTOR * position
 
         # TAKE: skewed thresholds — less eager to buy when long, more eager to sell
@@ -272,13 +272,13 @@ class Trader():
                 #ask_quantity = min(10, sell_capacity)
                 ask_quantity = sell_capacity
                 orders.append(Order(product, int(our_ask_price), -ask_quantity))
-        
+
         return orders
-    
+
     def trade_pepper_filtered(self, state: TradingState) -> List[Order]:
         """
         Pepper Root - Kelp-style strategy with large order filtering
-        
+
         Key insight from top teams:
         1. Identify LARGE consistent market maker orders (volume >= threshold)
         2. Use THEIR mid price as fair value (ignore small noisy orders)
@@ -288,23 +288,23 @@ class Trader():
         """
         product = 'INTARIAN_PEPPER_ROOT'
         orders = []
-        
+
         if product not in state.order_depths:
             return orders
-        
+
         order_depth = state.order_depths[product]
         position = state.position.get(product, 0)
         position_limit = self.POSITION_LIMITS[product]
-        
+
         buy_capacity = position_limit - position
         sell_capacity = position_limit + position
-        
+
         # Get fair value from LARGE orders only
         fair_value = self.get_large_order_mid(order_depth, self.PEPPER_LARGE_ORDER_THRESHOLD)
-        
+
         if fair_value is None:
             return orders
-        
+
         # Get the actual large order price levels
         large_bid, large_ask = self.get_large_order_levels(order_depth, self.PEPPER_LARGE_ORDER_THRESHOLD)
 
@@ -348,9 +348,9 @@ class Trader():
                 #ask_quantity = min(10, sell_capacity)
                 ask_quantity = sell_capacity
                 orders.append(Order(product, int(our_ask), -ask_quantity))
-        
+
         return orders
-    
+
     def run(self, state: TradingState):
         result = {}
 

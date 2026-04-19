@@ -1,0 +1,397 @@
+
+============================================================================================================================================
+PARAMETER GRID SEARCH WITH 100 LOOP ITERATIONS
+============================================================================================================================================
+Timestamp: 2026-04-16 15:26:19
+Test Type: INVENTORY
+Total Combinations: 6
+Iterations per Combo: 3
+Total Loop Runs: 18
+
+Parameter Ranges:
+  Position Limits: [{'osmium': 80, 'pepper': 80}, {'osmium': 90, 'pepper': 90}]
+  OSMIUM EMA Alpha: [0.15]
+  PEPPER EMA Alpha: [0.3]
+  VWAP Window: [15]
+  Inventory Bias: [0.6, 0.7, 0.8]
+============================================================================================================================================
+
+[1/6] Testing combination:
+  Positions: ±80/±80
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.6
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±80 Osmium, ±80 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 414,203     207.1%          -54            0
+2                 417,864     208.9%          -72            0
+3                 413,049     206.5%          -63            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      415,039
+  Median:                    414,203
+  Std Dev:                     2,053
+  Min:                       413,049
+  Max:                       417,864
+  Variance:                4,213,207
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          215,039
+
+Risk Metrics:
+  Coefficient of Variation: 0.0049 (lower is better)
+  Sharpe Ratio proxy:       104.7635
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      415,039 | Success: 100.0% | CoV: 0.0049
+
+[2/6] Testing combination:
+  Positions: ±80/±80
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.7
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±80 Osmium, ±80 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 414,203     207.1%          -54            0
+2                 417,864     208.9%          -72            0
+3                 413,049     206.5%          -63            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      415,039
+  Median:                    414,203
+  Std Dev:                     2,053
+  Min:                       413,049
+  Max:                       417,864
+  Variance:                4,213,207
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          215,039
+
+Risk Metrics:
+  Coefficient of Variation: 0.0049 (lower is better)
+  Sharpe Ratio proxy:       104.7635
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      415,039 | Success: 100.0% | CoV: 0.0049
+
+[3/6] Testing combination:
+  Positions: ±80/±80
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.8
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±80 Osmium, ±80 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 414,203     207.1%          -54            0
+2                 417,864     208.9%          -72            0
+3                 413,049     206.5%          -63            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      415,039
+  Median:                    414,203
+  Std Dev:                     2,053
+  Min:                       413,049
+  Max:                       417,864
+  Variance:                4,213,207
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          215,039
+
+Risk Metrics:
+  Coefficient of Variation: 0.0049 (lower is better)
+  Sharpe Ratio proxy:       104.7635
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      415,039 | Success: 100.0% | CoV: 0.0049
+
+[4/6] Testing combination:
+  Positions: ±90/±90
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.6
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±90 Osmium, ±90 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 436,162     218.1%          -64            0
+2                 439,716     219.9%          -82            0
+3                 435,771     217.9%          -73            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      437,216
+  Median:                    436,162
+  Std Dev:                     1,775
+  Min:                       435,771
+  Max:                       439,716
+  Variance:                3,149,647
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          237,216
+
+Risk Metrics:
+  Coefficient of Variation: 0.0041 (lower is better)
+  Sharpe Ratio proxy:       133.6638
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      437,216 | Success: 100.0% | CoV: 0.0041
+
+[5/6] Testing combination:
+  Positions: ±90/±90
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.7
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±90 Osmium, ±90 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 436,162     218.1%          -64            0
+2                 439,716     219.9%          -82            0
+3                 435,771     217.9%          -73            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      437,216
+  Median:                    436,162
+  Std Dev:                     1,775
+  Min:                       435,771
+  Max:                       439,716
+  Variance:                3,149,647
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          237,216
+
+Risk Metrics:
+  Coefficient of Variation: 0.0041 (lower is better)
+  Sharpe Ratio proxy:       133.6638
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      437,216 | Success: 100.0% | CoV: 0.0041
+
+[6/6] Testing combination:
+  Positions: ±90/±90
+  EMA: Osmium=0.15, Pepper=0.3
+  VWAP Window: 15, Inventory Bias: 0.8
+  Running 3 loops...
+====================================================================================================
+BACKTEST LOOP RUNNER WITH RANDOMIZATION
+====================================================================================================
+
+Configuration: ±90 Osmium, ±90 Pepper
+Match Mode: all
+Randomization: Depth=ON, Order=ON
+Iterations: 3
+
+Run       Portfolio Value   Target %   Osmium Pos   Pepper Pos
+----------------------------------------------------------------------
+1                 436,162     218.1%          -64            0
+2                 439,716     219.9%          -82            0
+3                 435,771     217.9%          -73            0
+
+====================================================================================================
+STATISTICAL SUMMARY
+====================================================================================================
+
+Portfolio Value Statistics:
+  Mean:                      437,216
+  Median:                    436,162
+  Std Dev:                     1,775
+  Min:                       435,771
+  Max:                       439,716
+  Variance:                3,149,647
+
+Target Achievement (200,000 XIRECs):
+  Runs above target:      3 (100.0%)
+  Runs below target:      0 (0.0%)
+  Avg margin above:          237,216
+
+Risk Metrics:
+  Coefficient of Variation: 0.0041 (lower is better)
+  Sharpe Ratio proxy:       133.6638
+
+====================================================================================================
+VALIDATION CHECKS
+====================================================================================================
+  [PASS] All runs complete
+  [PASS] Consistency: StdDev < 10% of Mean
+  [PASS] Reliability: >90% above target
+  [PASS] No critical failures
+
+====================================================================================================
+[PASS] LOOP TESTING PASSED
+       Strategy is robust and consistent across randomized scenarios.
+       Ready for competition.
+====================================================================================================
+
+  [CHECK] Mean PnL:      437,216 | Success: 100.0% | CoV: 0.0041
+
+============================================================================================================================================
+CONSOLIDATED RESULTS - ALL COMBINATIONS RANKED BY MEAN PnL
+============================================================================================================================================
+
+Rank   Positions    EMA O/P         VWAP   Inv.Bias          Mean PnL    Success %      CoV
+--------------------------------------------------------------------------------------------------------------------------------------------
+[BEST] 1    ±90/±90      0.15/0.30       15     0.6                437,216       100.0%   0.0041
+       2    ±90/±90      0.15/0.30       15     0.7                437,216       100.0%   0.0041
+       3    ±90/±90      0.15/0.30       15     0.8                437,216       100.0%   0.0041
+       4    ±80/±80      0.15/0.30       15     0.6                415,039       100.0%   0.0049
+       5    ±80/±80      0.15/0.30       15     0.7                415,039       100.0%   0.0049
+       6    ±80/±80      0.15/0.30       15     0.8                415,039       100.0%   0.0049
+
+============================================================================================================================================
+BEST PERFORMING COMBINATION
+============================================================================================================================================
+
+[BEST] OPTIMAL PARAMETERS:
+   Position Limits:    ±90 Osmium, ±90 Pepper
+   OSMIUM_EMA_ALPHA:   0.15
+   PEPPER_EMA_ALPHA:   0.3
+   OSMIUM_VWAP_WINDOW: 15
+   OSMIUM_INVENTORY_BIAS: 0.6
+
+   Mean PnL:             437,216 XIRECs
+   Success Rate:          100.0% (all > 200k)
+   Worst Case:           435,771 XIRECs (217.9% of target)
+   Consistency:           0.0041 (CoV)
+
+[UP] vs Phase 2 Optimal (80/80, 0.15/0.3, window=15, bias=0.7):
+   Improvement: +5.3%
+   Gain:          22,178 XIRECs
+
+============================================================================================================================================
+Test Complete: 2026-04-16 15:29:09
+============================================================================================================================================
+

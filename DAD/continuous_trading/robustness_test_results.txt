@@ -1,0 +1,58 @@
+==================================================================================================================================
+ROBUSTNESS TESTING: Single Day + Walk-Forward Validation
+==================================================================================================================================
+
+TEST 1: SINGLE DAY BACKTESTS
+----------------------------------------------------------------------------------------------------------------------------------
+Tests if strategy performs consistently across different market conditions
+
+  Day -2 (Early)            Profit: $-109,802.00  |  Fills: 1337
+  Day -1 (Middle)           Profit: $-13,642.00  |  Fills: 1322
+  Day 0 (Final)             Profit: $ 55,411.00  |  Fills: 1346
+
+Analysis:
+  Average profit: $-22,677.67
+  Min: $-109,802.00 (Day -2)
+  Max: $55,411.00 (Day 0)
+  Range: $165,213.00 (variance indicator)
+  [FAIL] FRAGILE: Variance > 50% (depends on market conditions)
+
+==================================================================================================================================
+TEST 2: WALK-FORWARD VALIDATION
+----------------------------------------------------------------------------------------------------------------------------------
+Tests if parameters learned on past data work on future data
+
+Walk-Forward 1: Train on Day -2 -> Test on Day -1
+  Train profit (Day -2): $-109,802.00
+  Test profit (Day -1):  $-13,642.00
+  Delta: +96,160.00  ( -87.6%)
+
+Walk-Forward 2: Train on Days -2, -1 -> Test on Day 0
+  Train profit (Days -2, -1): $ 67,616.00
+  Test profit (Day 0):         $ 55,411.00
+  Delta: +21,603.00
+
+==================================================================================================================================
+CONCLUSIONS
+==================================================================================================================================
+
+1. DAY CONSISTENCY:
+   [WARN] Strategy VARIES significantly by day
+   -> May be sensitive to market regime; test more configurations
+
+2. PARAMETER TRANSFER:
+   [WARN] Performance drops significantly Day -2 -> Day -1
+   -> Parameters may be overfit or market changed
+
+3. FORWARD LOOKING:
+   [WARN] Performance unpredictable on new day
+   -> Consider different parameters or strategy changes
+
+==================================================================================================================================
+RECOMMENDATION
+==================================================================================================================================
+[WARN] Strategy shows high variability or poor parameter transfer.
+  Recommendation: Test different parameter combinations
+                  or investigate why days differ
+
+==================================================================================================================================

@@ -72,19 +72,69 @@ Tested: EMA alpha, inventory bias, VWAP window, volatility thresholds, position 
 Tested extended parameter ranges
 **Result**: +161,186 XIRECs (plateau confirmed - no improvement)
 
-### Final Parameters (PHASE 2 OPTIMAL - NOW IN trader.py)
-- **Osmium EMA Alpha**: 0.15 (slower trend detection)
-- **Osmium Inventory Bias**: 0.7 (conservative rebalancing)
-- **Osmium VWAP Window**: 15 (faster price response)
-- **Osmium Vol Base**: 20 (optimized volatility scaling)
-- **Pepper EMA Alpha**: 0.3 (responsive trend detection)
-- **Pepper Vol Base**: 300 (conservative for volatile commodity)
+### Final Parameters (CLEARING-LEVEL OPTIMIZED - NOW IN trader.py)
 
-**Enhancements**:
+**OSMIUM Market-Making**
+
+- EMA Alpha: 0.12 (slower trend detection, less noise)
+- Inventory Bias: 0.7 (conservative rebalancing)
+- VWAP Window: 15 (faster price response)
+- Vol Base: 20 (optimal volatility scaling)
+- Order Sizing: **Clearing-level** (right-sized to clearing volumes, not position room)
+
+**PEPPER Trend-Following**
+
+- EMA Alpha: 0.35 (responsive trend detection, adaptive to regime)
+- Vol Base: 300 (higher threshold for volatile commodity)
+- Adaptive EMA: Adjusts alpha based on market regime (trending vs choppy)
+- Order Sizing: **Clearing-level** (right-sized based on trend signal strength)
+
+**Position Limits**
+
+- Standard (Proven Baseline): ±80 / ±80
+- Optimized (Current): ±90 / ±90
+- Expected PnL: 438,650 XIRECs (219% of 200k target)
+
+**Enhancements**
+
 - Adaptive EMA Alpha: market-condition aware trend sensitivity
 - Mean Reversion Detection: 1.5x scaling on extreme overshoots (>2σ from VWAP)
+- Clearing-Level Sizing: Right-size orders based on cumulative order book depth
 
-See [continuous_trading/trader.py](../continuous_trading/trader.py) lines 230-326 for implementation
+### Order Sizing: Clearing-Level Logic (Apr 16 Implementation)
+
+**Three Core Methods**:
+
+1. **get_cumulative_depth(depth, side)**
+   - Builds cumulative volume map at each price level
+   - For BUY: walks up from best_ask, summing ask volumes
+   - For SELL: walks down from best_bid, summing bid volumes
+   - Output: {price: cumulative_volume_to_clear_through_price}
+
+2. **find_clearing_volume(depth, side, target_price)**
+   - Queries: "How much volume to clear through target_price?"
+   - Uses actual order book prices (not assumptions)
+   - Output: (volume_needed, is_achievable)
+
+3. **calculate_right_sized_order(depth, side, target_price, vwap, pos, limit, aggressiveness)**
+   - Computes optimal order size:
+     - Get clearing volume from find_clearing_volume()
+     - Add 10% safety buffer
+     - Cap at position limit room
+     - Scale by aggressiveness (volatility × trend factors)
+   - Output: optimal_quantity to place
+
+**Integration**:
+- OSMIUM: Calls calculate_right_sized_order() for both buy/sell sides
+- PEPPER: Calls calculate_right_sized_order() for position reduction and establishment
+- Fallback: Uses 50% position room if order book is empty (thin market protection)
+
+**Validation Results** (Apr 16, 20-iteration stress test):
+- Mean PnL: 438,650 XIRECs (parity with baseline)
+- CoV: 1.47% (excellent consistency)
+- Success Rate: 100% (all runs above 200k target)
+
+See [continuous_trading/trader.py](../continuous_trading/trader.py) for complete implementation
 
 ### Phase 2: Scaled Search (20,736 combinations - completed)
 Extended grid around optimal values:
